@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
 <title>TRPG 情報整理・考察ノート（PC・スマホリアルタイム同期＋立ち絵差分対応版）</title>
 <style>
   :root {
@@ -992,7 +993,6 @@ function compressImageFile(file, maxSize = 220, quality = 0.78) {
         canvas.height = h;
         const ctx = canvas.getContext('2d');
         ctx.drawImage(img, 0, 0, w, h);
-        // 透過PNG対応のためWebPを優先し、非対応環境ではJPEGにフォールバック
         let dataUrl = canvas.toDataURL('image/webp', quality);
         if (!dataUrl.startsWith('data:image/webp')) {
           dataUrl = canvas.toDataURL('image/jpeg', quality);
@@ -1261,7 +1261,6 @@ function loadLocalFallback() {
 
 function saveState() {
   const jsonStr = JSON.stringify(state);
-  // Firestoreの1MB制限チェック（約950KB警告）
   if (jsonStr.length > 950000) {
     alert('データ容量が上限（約1MB）に近づいています。不要な立ち絵差分を削除するか、JSONバックアップを保存してください。');
   }
