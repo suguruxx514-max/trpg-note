@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="robots" content="noindex, nofollow">
-<title>TRPG 情報整理・考察ノート（PC・スマホリアルタイム同期＋立ち絵差分対応版）</title>
+<title>TRPG 情報整理・考察ノート（ピル型インデックス＆リアルタイム同期版）</title>
 <style>
   :root {
     --bg-main: #0f1117;
@@ -120,18 +120,14 @@
     font-weight: 600;
   }
   body:not([data-theme]) .sync-badge,
-  body[data-theme="dark"] .sync-badge {
-    color: #6ee7b7;
-  }
+  body[data-theme="dark"] .sync-badge { color: #6ee7b7; }
   .sync-badge.offline {
     background: rgba(245, 158, 11, 0.18);
     color: #b45309;
     border-color: rgba(245, 158, 11, 0.45);
   }
   body:not([data-theme]) .sync-badge.offline,
-  body[data-theme="dark"] .sync-badge.offline {
-    color: #fcd34d;
-  }
+  body[data-theme="dark"] .sync-badge.offline { color: #fcd34d; }
 
   select, input[type="text"], input[type="password"], textarea {
     background-color: var(--bg-main);
@@ -197,7 +193,7 @@
     grid-template-columns: 350px 1fr;
     gap: 16px;
     padding: 16px;
-    max-width: 1600px;
+    max-width: 1650px;
     margin: 0 auto;
   }
   @media (max-width: 960px) {
@@ -249,6 +245,7 @@
   .todo-item.done span { text-decoration: line-through; color: var(--text-muted); }
   .todo-item span { flex: 1; word-break: break-word; }
 
+  /* Tabs */
   .tabs {
     display: flex;
     flex-wrap: wrap;
@@ -257,10 +254,10 @@
     padding-bottom: 10px;
   }
   .tab-btn {
-    padding: 7px 12px;
+    padding: 7px 11px;
     border-radius: 6px;
     font-weight: 600;
-    font-size: 13px;
+    font-size: 12.5px;
     background: transparent;
     border: 1px solid transparent;
     color: var(--text-muted);
@@ -271,15 +268,19 @@
     border-color: var(--accent);
     color: var(--text-main);
   }
+  .tab-btn.pill-tab.active {
+    background: linear-gradient(135deg, rgba(99, 102, 241, 0.16), rgba(168, 85, 247, 0.16));
+    border-color: var(--accent);
+    color: var(--text-main);
+  }
   .tab-btn.secret-tab.active {
     background: var(--secret-bg);
     border-color: var(--secret);
     color: var(--secret);
   }
   body:not([data-theme]) .tab-btn.secret-tab.active,
-  body[data-theme="dark"] .tab-btn.secret-tab.active {
-    color: #e9d5ff;
-  }
+  body[data-theme="dark"] .tab-btn.secret-tab.active { color: #e9d5ff; }
+
   .badge-count {
     background: rgba(128,128,128,0.18);
     padding: 1px 6px;
@@ -300,6 +301,160 @@
   }
   .filter-bar input { flex: 1; min-width: 160px; }
 
+  /* =========================================================
+     カテゴリ別・楕円形ピルインデックス（一覧・開閉表示）
+     ========================================================= */
+  .pill-board {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+  .pill-category-section {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .pill-category-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text-main);
+    padding-bottom: 6px;
+    border-bottom: 1px dashed var(--border);
+  }
+  .pill-cloud {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    align-items: center;
+  }
+
+  /* 楕円形ピルボタン */
+  .info-pill-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 15px;
+    border-radius: 9999px;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    border: 1.5px solid transparent;
+    transition: transform 0.12s, box-shadow 0.15s, filter 0.15s;
+    user-select: none;
+    line-height: 1.3;
+  }
+  .info-pill-btn:hover {
+    transform: translateY(-1px);
+    filter: brightness(1.06);
+  }
+  .info-pill-btn.active-pill {
+    box-shadow: 0 0 0 2.5px var(--text-main);
+    transform: scale(1.03);
+  }
+  .pill-sub-day {
+    font-size: 10.5px;
+    font-weight: 600;
+    opacity: 0.82;
+    padding: 1px 6px;
+    border-radius: 9999px;
+    background: rgba(0, 0, 0, 0.12);
+  }
+  body[data-theme="orange"] .pill-sub-day,
+  body[data-theme="cream"] .pill-sub-day,
+  body[data-theme="mint"] .pill-sub-day {
+    background: rgba(255, 255, 255, 0.65);
+  }
+
+  /* カテゴリ別カラー（楕円形背景色） */
+  /* 入手情報：スカイブルー */
+  .pill-info {
+    background: rgba(14, 165, 233, 0.22);
+    border-color: rgba(14, 165, 233, 0.55);
+    color: #0369a1;
+  }
+  body:not([data-theme]) .pill-info, body[data-theme="dark"] .pill-info {
+    background: rgba(14, 165, 233, 0.22);
+    color: #7dd3fc;
+  }
+
+  /* 秘匿HO：パープル */
+  .pill-secret {
+    background: rgba(168, 85, 247, 0.22);
+    border-color: rgba(168, 85, 247, 0.55);
+    color: #7e22ce;
+  }
+  body:not([data-theme]) .pill-secret, body[data-theme="dark"] .pill-secret {
+    background: rgba(168, 85, 247, 0.24);
+    color: #e9d5ff;
+  }
+
+  /* NPC：エメラルドグリーン */
+  .pill-npc {
+    background: rgba(16, 185, 129, 0.2);
+    border-color: rgba(16, 185, 129, 0.52);
+    color: #047857;
+  }
+  body:not([data-theme]) .pill-npc, body[data-theme="dark"] .pill-npc {
+    background: rgba(16, 185, 129, 0.22);
+    color: #6ee7b7;
+  }
+
+  /* 他PL / PC：アンバー・オレンジ */
+  .pill-pl {
+    background: rgba(245, 158, 11, 0.22);
+    border-color: rgba(245, 158, 11, 0.55);
+    color: #b45309;
+  }
+  body:not([data-theme]) .pill-pl, body[data-theme="dark"] .pill-pl {
+    background: rgba(245, 158, 11, 0.24);
+    color: #fcd34d;
+  }
+
+  /* 場所・ギミック：イエローゴールド */
+  .pill-loc {
+    background: rgba(234, 179, 8, 0.22);
+    border-color: rgba(234, 179, 8, 0.55);
+    color: #a16207;
+  }
+  body:not([data-theme]) .pill-loc, body[data-theme="dark"] .pill-loc {
+    background: rgba(234, 179, 8, 0.22);
+    color: #fef08a;
+  }
+
+  /* 考察・仮説：ローズピンク */
+  .pill-hyp {
+    background: rgba(236, 72, 153, 0.2);
+    border-color: rgba(236, 72, 153, 0.52);
+    color: #be185d;
+  }
+  body:not([data-theme]) .pill-hyp, body[data-theme="dark"] .pill-hyp {
+    background: rgba(236, 72, 153, 0.22);
+    color: #fbcfe8;
+  }
+
+  /* 選択したピルの詳細展開パネル */
+  .pill-detail-drawer {
+    margin-top: 4px;
+    padding: 12px;
+    border-radius: 8px;
+    background: var(--bg-main);
+    border: 1.5px solid var(--accent);
+    animation: fadeInDrawer 0.15s ease-out;
+  }
+  @keyframes fadeInDrawer {
+    from { opacity: 0; transform: translateY(-4px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* Cards */
   .card-list { display: flex; flex-direction: column; gap: 10px; }
   .card {
     background-color: var(--bg-card);
@@ -315,9 +470,6 @@
   .card.pl-card {
     border-left: 4px solid #f59e0b;
   }
-  .card.self-card {
-    border-left: 4px solid #06b6d4;
-  }
   .card.highlight {
     border-color: #f59e0b !important;
     box-shadow: 0 0 0 2px rgba(245, 158, 11, 0.35);
@@ -328,6 +480,7 @@
     align-items: flex-start;
     gap: 8px;
     margin-bottom: 6px;
+    flex-wrap: wrap;
   }
   .card-meta {
     display: flex;
@@ -346,7 +499,6 @@
   .tag.secret-tag { background: var(--secret-bg); color: var(--secret); border: 1px solid var(--secret-border); }
   .tag.npc-tag { background: rgba(16, 185, 129, 0.16); color: #059669; }
   .tag.pl-tag { background: rgba(245, 158, 11, 0.18); color: #d97706; border: 1px solid rgba(245, 158, 11, 0.4); }
-  .tag.self-tag { background: rgba(6, 182, 212, 0.18); color: #0891b2; border: 1px solid rgba(6, 182, 212, 0.4); }
   .tag.loc-tag { background: rgba(234, 179, 8, 0.16); color: #b45309; }
   .tag.hyp-tag { background: rgba(236, 72, 153, 0.16); color: #db2777; }
 
@@ -354,89 +506,8 @@
   body:not([data-theme]) .tag.secret-tag, body[data-theme="dark"] .tag.secret-tag { color: #d8b4fe; }
   body:not([data-theme]) .tag.npc-tag, body[data-theme="dark"] .tag.npc-tag { color: #6ee7b7; }
   body:not([data-theme]) .tag.pl-tag, body[data-theme="dark"] .tag.pl-tag { color: #fcd34d; }
-  body:not([data-theme]) .tag.self-tag, body[data-theme="dark"] .tag.self-tag { color: #67e8f9; }
   body:not([data-theme]) .tag.loc-tag, body[data-theme="dark"] .tag.loc-tag { color: #fcd34d; }
   body:not([data-theme]) .tag.hyp-tag, body[data-theme="dark"] .tag.hyp-tag { color: #f9a8d4; }
-
-  /* 立ち絵・表情差分ギャラリー */
-  .card-body-with-portrait {
-    display: flex;
-    gap: 12px;
-    align-items: flex-start;
-  }
-  @media (max-width: 540px) {
-    .card-body-with-portrait { flex-direction: column; }
-  }
-  .portrait-viewer {
-    flex-shrink: 0;
-    width: 112px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 5px;
-  }
-  .portrait-main-box {
-    width: 108px;
-    height: 108px;
-    border-radius: 8px;
-    border: 1px solid var(--border);
-    background: var(--bg-main);
-    overflow: hidden;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: zoom-in;
-    position: relative;
-  }
-  .portrait-main-box img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-  }
-  .portrait-label-badge {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    background: rgba(0, 0, 0, 0.68);
-    color: #fff;
-    font-size: 10px;
-    text-align: center;
-    padding: 1px 4px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-  .portrait-thumbs {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 4px;
-    justify-content: center;
-    width: 100%;
-  }
-  .portrait-thumb {
-    width: 24px;
-    height: 24px;
-    border-radius: 4px;
-    border: 1.5px solid var(--border);
-    overflow: hidden;
-    cursor: pointer;
-    opacity: 0.72;
-    transition: all 0.15s;
-  }
-  .portrait-thumb:hover { opacity: 1; }
-  .portrait-thumb.active {
-    border-color: var(--accent);
-    opacity: 1;
-    transform: scale(1.08);
-  }
-  .portrait-thumb img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    display: block;
-  }
-  .card-text-col { flex: 1; min-width: 0; }
 
   .card-title { font-weight: 700; font-size: 15px; color: var(--text-main); margin-bottom: 4px; }
   .card-summary { color: var(--text-main); font-size: 13.5px; white-space: pre-wrap; }
@@ -476,8 +547,8 @@
   }
   .link-chip {
     font-size: 11.5px;
-    padding: 3px 8px;
-    border-radius: 12px;
+    padding: 3px 10px;
+    border-radius: 9999px;
     background: rgba(99, 102, 241, 0.15);
     border: 1px solid rgba(99, 102, 241, 0.4);
     color: var(--accent);
@@ -522,58 +593,6 @@
   .form-group label { font-size: 12px; font-weight: 600; color: var(--text-muted); }
   .inline-row { display: flex; gap: 8px; align-items: center; }
 
-  /* モーダル内 立ち絵・表情差分エディタ */
-  .portrait-editor-box {
-    background: var(--bg-main);
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    padding: 10px;
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-  }
-  .portrait-editor-list {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-  }
-  .portrait-edit-item {
-    background: var(--bg-card);
-    border: 1px solid var(--border);
-    border-radius: 6px;
-    padding: 6px;
-    width: 118px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 4px;
-    position: relative;
-  }
-  .portrait-edit-item img {
-    width: 84px;
-    height: 84px;
-    object-fit: cover;
-    border-radius: 5px;
-    border: 1px solid var(--border);
-  }
-  .portrait-edit-item input[type="text"] {
-    width: 100%;
-    padding: 3px 5px;
-    font-size: 11px;
-    text-align: center;
-  }
-  .portrait-del-btn {
-    position: absolute;
-    top: 2px;
-    right: 2px;
-    padding: 1px 5px;
-    font-size: 10px;
-    background: rgba(239, 68, 68, 0.85);
-    color: #fff;
-    border: none;
-    border-radius: 4px;
-  }
-
   /* モーダル内リンク選択UI */
   .link-picker-panel {
     background: var(--bg-main);
@@ -604,7 +623,7 @@
     font-weight: 600;
   }
   .link-selector-box {
-    max-height: 160px;
+    max-height: 170px;
     overflow-y: auto;
     display: flex;
     flex-direction: column;
@@ -649,37 +668,6 @@
     background: transparent;
     font-size: 11px;
     color: var(--danger);
-  }
-
-  /* 画像拡大ライトボックス */
-  .lightbox-backdrop {
-    display: none;
-    position: fixed;
-    inset: 0;
-    background: rgba(0, 0, 0, 0.85);
-    z-index: 350;
-    align-items: center;
-    justify-content: center;
-    flex-direction: column;
-    gap: 10px;
-    padding: 20px;
-    cursor: zoom-out;
-  }
-  .lightbox-backdrop.open { display: flex; }
-  .lightbox-backdrop img {
-    max-width: 90vw;
-    max-height: 80vh;
-    border-radius: 10px;
-    border: 2px solid #fff;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.6);
-  }
-  .lightbox-caption {
-    color: #fff;
-    font-weight: 700;
-    font-size: 14px;
-    background: rgba(0,0,0,0.6);
-    padding: 4px 12px;
-    border-radius: 16px;
   }
 
   .timeline-group {
@@ -786,20 +774,20 @@
 
   <main class="panel">
     <div class="tabs">
-      <button class="tab-btn active" data-tab="info" onclick="switchTab('info')">📄 入手情報<span class="badge-count" id="count-info">0</span></button>
+      <button class="tab-btn pill-tab active" data-tab="pills" onclick="switchTab('pills')">🏷️ カテゴリ別ピル一覧<span class="badge-count" id="count-all">0</span></button>
+      <button class="tab-btn" data-tab="info" onclick="switchTab('info')">📄 入手情報<span class="badge-count" id="count-info">0</span></button>
       <button class="tab-btn secret-tab" data-tab="secret" onclick="switchTab('secret')">🔒 秘匿HO<span class="badge-count" id="count-secret">0</span></button>
-      <button class="tab-btn" data-tab="npc" onclick="switchTab('npc')">👤 NPC・PCリスト<span class="badge-count" id="count-npc">0</span></button>
+      <button class="tab-btn" data-tab="npc" onclick="switchTab('npc')">👤 NPC・他PLリスト<span class="badge-count" id="count-npc">0</span></button>
       <button class="tab-btn" data-tab="loc" onclick="switchTab('loc')">🗺️ 場所・ギミック<span class="badge-count" id="count-loc">0</span></button>
       <button class="tab-btn" data-tab="tree" onclick="switchTab('tree')">🔗 関連ツリー・日程別</button>
     </div>
 
     <div class="filter-bar" id="filterBar">
-      <input type="text" id="searchInput" placeholder="キーワード検索（要約・原文・メモ）..." oninput="renderMain()">
+      <input type="text" id="searchInput" placeholder="キーワード検索（タイトル・要約・原文・メモ）..." oninput="renderMain()">
       <select id="npcRoleFilter" style="display:none;" onchange="renderMain()">
-        <option value="ALL">👤 すべて（NPC・自PC・他PL）</option>
+        <option value="ALL">👤 すべて（NPC・他PL）</option>
         <option value="NPC">NPCのみ</option>
         <option value="PL">他PL / PCのみ</option>
-        <option value="SELF">自PCのみ</option>
       </select>
       <select id="dayFilter" onchange="renderMain()">
         <option value="ALL">すべての期間・日程</option>
@@ -807,7 +795,7 @@
       <button class="primary" id="addPrimaryBtn" onclick="openCurrentTabModal()">＋ 新規記録</button>
     </div>
 
-    <div id="mainContent" class="card-list"></div>
+    <div id="mainContent"></div>
   </main>
 </div>
 
@@ -820,6 +808,17 @@
     </div>
     <input type="hidden" id="editType">
     <input type="hidden" id="editId">
+
+    <div class="form-group" id="groupCategoryPicker" style="display:none;">
+      <label>登録するカテゴリ</label>
+      <select id="fieldCategoryType" onchange="onModalCategoryChange(this.value)">
+        <option value="info">📄 入手情報</option>
+        <option value="secret">🔒 秘匿HO</option>
+        <option value="npc">👤 NPC / 他PL</option>
+        <option value="loc">🗺️ 場所・ギミック</option>
+        <option value="hyp">🧠 考察・仮説</option>
+      </select>
+    </div>
 
     <div class="form-group" id="groupDay">
       <label>取得・登録日程</label>
@@ -839,19 +838,6 @@
       <input type="text" id="fieldTitle" placeholder="例：古びた日記の切れ端">
     </div>
 
-    <!-- 立ち絵・表情差分登録エリア（NPC・自PC・他PLタブ用） -->
-    <div class="form-group" id="groupPortraits" style="display:none;">
-      <label>🖼️ 立ち絵・表情差分（自動軽量圧縮・複数追加可）</label>
-      <div class="portrait-editor-box">
-        <div class="inline-row" style="justify-content:space-between;flex-wrap:wrap;">
-          <span style="font-size:11.5px;color:var(--text-muted);">※選択時に自動で軽量アイコン化（約10KB）されるため動作が重くなりません</span>
-          <button type="button" class="primary" onclick="document.getElementById('portraitFileInput').click()">＋ 立ち絵・差分を追加</button>
-          <input type="file" id="portraitFileInput" accept="image/*" multiple style="display:none;" onchange="handlePortraitFiles(event)">
-        </div>
-        <div class="portrait-editor-list" id="portraitEditorList"></div>
-      </div>
-    </div>
-
     <div class="form-group">
       <label id="labelSummary">1行要約・要点メモ</label>
       <textarea id="fieldSummary" rows="3" placeholder="自分の言葉で噛み砕いた要点"></textarea>
@@ -863,14 +849,14 @@
     </div>
 
     <div class="form-group">
-      <label>🔗 過去の情報・秘匿・NPC・PC・場所・仮説と結びつける（双方向リンク）</label>
+      <label>🔗 過去の情報・秘匿・NPC・他PL・場所・仮説と結びつける（双方向リンク）</label>
       <div class="link-picker-panel">
         <div class="link-cat-tabs" id="linkCatTabs">
           <button type="button" class="link-cat-btn active" data-cat="ALL" onclick="switchLinkCat('ALL')">すべて</button>
           <button type="button" class="link-cat-btn" data-cat="info" onclick="switchLinkCat('info')">📄 入手情報</button>
           <button type="button" class="link-cat-btn" data-cat="secret" onclick="switchLinkCat('secret')">🔒 秘匿</button>
           <button type="button" class="link-cat-btn" data-cat="npc" onclick="switchLinkCat('npc')">👤 NPC</button>
-          <button type="button" class="link-cat-btn" data-cat="pl" onclick="switchLinkCat('pl')">🎭 自PC・他PL</button>
+          <button type="button" class="link-cat-btn" data-cat="pl" onclick="switchLinkCat('pl')">🎭 他PL</button>
           <button type="button" class="link-cat-btn" data-cat="loc" onclick="switchLinkCat('loc')">🗺️ 場所</button>
           <button type="button" class="link-cat-btn" data-cat="hyp" onclick="switchLinkCat('hyp')">🧠 仮説</button>
         </div>
@@ -885,12 +871,6 @@
       <button class="primary" onclick="saveItem()">保存する</button>
     </div>
   </div>
-</div>
-
-<!-- 立ち絵拡大表示モーダル -->
-<div class="lightbox-backdrop" id="lightboxModal" onclick="closeLightbox()">
-  <img id="lightboxImg" src="" alt="立ち絵プレビュー">
-  <div class="lightbox-caption" id="lightboxCaption"></div>
 </div>
 
 <!-- Firebase SDK (compat) -->
@@ -924,16 +904,15 @@ let freeMemoTimer = null;
 
 let modalSelectedLinkIds = new Set();
 let currentLinkCat = 'ALL';
-let modalPortraits = []; // [{ id, label, dataUrl }]
-let activePortraitIndexMap = {}; // itemId -> active index
+let activePillId = null; // ピル一覧で現在開いているアイテムID
 
 let state = {
   currentScenarioId: null,
   scenarios: {}
 };
-let currentTab = 'info';
+let currentTab = 'pills';
 
-// テーマ切替
+// テーマ切替機能
 function initTheme() {
   const savedTheme = localStorage.getItem(THEME_KEY) || 'dark';
   applyTheme(savedTheme);
@@ -958,7 +937,6 @@ function normalizeStateData(rawState) {
     if (!Array.isArray(sc.items)) sc.items = [];
     sc.items.forEach(it => {
       if (!Array.isArray(it.links)) it.links = [];
-      if (!Array.isArray(it.portraits)) it.portraits = [];
       if (it.type === 'npc' && !it.subTag) {
         it.subTag = 'NPC';
       }
@@ -968,126 +946,6 @@ function normalizeStateData(rawState) {
     rawState.currentScenarioId = Object.keys(rawState.scenarios)[0] || null;
   }
   return rawState;
-}
-
-// 画像自動リサイズ＆軽量圧縮（最大220x220px, WebP/JPEG品質0.78 -> 約8〜15KB）
-function compressImageFile(file, maxSize = 220, quality = 0.78) {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      const img = new Image();
-      img.onload = () => {
-        let w = img.width;
-        let h = img.height;
-        if (w > maxSize || h > maxSize) {
-          if (w > h) {
-            h = Math.round((h * maxSize) / w);
-            w = maxSize;
-          } else {
-            w = Math.round((w * maxSize) / h);
-            h = maxSize;
-          }
-        }
-        const canvas = document.createElement('canvas');
-        canvas.width = w;
-        canvas.height = h;
-        const ctx = canvas.getContext('2d');
-        ctx.drawImage(img, 0, 0, w, h);
-        let dataUrl = canvas.toDataURL('image/webp', quality);
-        if (!dataUrl.startsWith('data:image/webp')) {
-          dataUrl = canvas.toDataURL('image/jpeg', quality);
-        }
-        resolve(dataUrl);
-      };
-      img.onerror = reject;
-      img.src = e.target.result;
-    };
-    reader.onerror = reject;
-    reader.readAsDataURL(file);
-  });
-}
-
-async function handlePortraitFiles(event) {
-  const files = Array.from(event.target.files || []);
-  if (files.length === 0) return;
-  for (const file of files) {
-    try {
-      const dataUrl = await compressImageFile(file, 220, 0.78);
-      const baseName = file.name.replace(/\.[^/.]+$/, '').slice(0, 12) || `差分${modalPortraits.length + 1}`;
-      modalPortraits.push({
-        id: 'p_' + Date.now() + '_' + Math.random().toString(36).slice(2, 6),
-        label: baseName,
-        dataUrl
-      });
-    } catch (err) {
-      console.error('Image compression failed:', err);
-    }
-  }
-  event.target.value = '';
-  renderPortraitEditor();
-}
-
-function updatePortraitLabel(index, val) {
-  if (modalPortraits[index]) {
-    modalPortraits[index].label = val;
-  }
-}
-
-function removePortrait(index) {
-  modalPortraits.splice(index, 1);
-  renderPortraitEditor();
-}
-
-function renderPortraitEditor() {
-  const list = document.getElementById('portraitEditorList');
-  list.innerHTML = '';
-  if (modalPortraits.length === 0) {
-    list.innerHTML = '<span style="font-size:12px;color:var(--text-muted);">立ち絵はまだ登録されていません。右上のボタンから複数枚まとめて追加できます。</span>';
-    return;
-  }
-  modalPortraits.forEach((p, idx) => {
-    const div = document.createElement('div');
-    div.className = 'portrait-edit-item';
-    div.innerHTML = `
-      <button type="button" class="portrait-del-btn" onclick="removePortrait(${idx})" title="削除">✕</button>
-      <img src="${p.dataUrl}" alt="${escapeHtml(p.label)}">
-      <input type="text" value="${escapeHtml(p.label)}" placeholder="表情名(通常/焦り)" oninput="updatePortraitLabel(${idx}, this.value)">
-    `;
-    list.appendChild(div);
-  });
-}
-
-function switchCardPortrait(itemId, index) {
-  activePortraitIndexMap[itemId] = index;
-  const sc = getCurrentScenario();
-  const item = sc.items.find(x => x.id === itemId);
-  if (!item || !item.portraits || !item.portraits[index]) return;
-  const p = item.portraits[index];
-
-  const mainImg = document.getElementById(`p_main_img_${itemId}`);
-  const mainLbl = document.getElementById(`p_main_lbl_${itemId}`);
-  if (mainImg) mainImg.src = p.dataUrl;
-  if (mainLbl) mainLbl.textContent = p.label || `差分${index + 1}`;
-
-  const thumbs = document.querySelectorAll(`#p_thumbs_${itemId} .portrait-thumb`);
-  thumbs.forEach((el, idx) => {
-    el.classList.toggle('active', idx === index);
-  });
-}
-
-function openLightbox(itemId) {
-  const sc = getCurrentScenario();
-  const item = sc.items.find(x => x.id === itemId);
-  if (!item || !item.portraits || item.portraits.length === 0) return;
-  const idx = activePortraitIndexMap[itemId] || 0;
-  const p = item.portraits[idx] || item.portraits[0];
-  document.getElementById('lightboxImg').src = p.dataUrl;
-  document.getElementById('lightboxCaption').textContent = `${item.title}（${p.label || '立ち絵'}）`;
-  document.getElementById('lightboxModal').classList.add('open');
-}
-
-function closeLightbox() {
-  document.getElementById('lightboxModal').classList.remove('open');
 }
 
 function initFirebase() {
@@ -1160,8 +1018,7 @@ function createSampleScenario() {
       title: 'HO1：あなたは館の主人の隠し子である',
       summary: 'あなたは遺産相続権を持つが、他のPCには血縁関係を隠している。深夜0時に書斎へ来るよう手紙を受け取った。',
       raw: '【秘匿ハンドアウト HO1】\nあなたは当主・九条厳一郎の認知されていない実子である。他の探索者には単なる友人として同行していることになっている。',
-      links: ['inf_1'],
-      portraits: []
+      links: ['inf_1']
     },
     {
       id: 'inf_1',
@@ -1172,8 +1029,7 @@ function createSampleScenario() {
       title: '書斎の暖炉から見つかった燃え残りの手紙',
       summary: '「深夜0時、秘密の継承について話す」と書かれた手紙の切れ端。差出人の印章が押されている。',
       raw: 'KP描写：灰の中から半分焦げた羊皮紙が見つかる。『今宵、深夜0時に書斎へ来られよ。真の継承者へすべてを託す――厳一郎』',
-      links: ['sec_1', 'npc_1', 'npc_2'],
-      portraits: []
+      links: ['sec_1', 'npc_1', 'npc_2']
     },
     {
       id: 'npc_1',
@@ -1184,8 +1040,7 @@ function createSampleScenario() {
       title: '佐伯 宗介（執事・58歳）',
       summary: '長年当主に仕える執事。0時前後のアリバイが曖昧で、書斎の合鍵を持っている可能性がある。',
       raw: '立ち絵：黒服の老紳士。右手に白い手袋をしている。',
-      links: ['inf_1'],
-      portraits: []
+      links: ['inf_1']
     },
     {
       id: 'npc_2',
@@ -1196,8 +1051,7 @@ function createSampleScenario() {
       title: 'HO2：霧島 蓮（PL：〇〇さん）',
       summary: '私立探偵のPC。当主の過去の事件を独自に調べている様子。深夜0時頃に2階廊下で目撃情報あり。',
       raw: '所持技能：目星80 / 心理学75。秘匿で当主と何らかの因縁がありそう。',
-      links: ['inf_1'],
-      portraits: []
+      links: ['inf_1']
     }
   ];
   return sc;
@@ -1260,15 +1114,11 @@ function loadLocalFallback() {
 }
 
 function saveState() {
-  const jsonStr = JSON.stringify(state);
-  if (jsonStr.length > 950000) {
-    alert('データ容量が上限（約1MB）に近づいています。不要な立ち絵差分を削除するか、JSONバックアップを保存してください。');
-  }
-  localStorage.setItem(LOCAL_BACKUP_KEY, jsonStr);
+  localStorage.setItem(LOCAL_BACKUP_KEY, JSON.stringify(state));
   if (db && currentRoomId && !isRemoteUpdating) {
     setSyncStatus('⏳ 保存中...', false);
     db.collection('trpg_rooms').doc(currentRoomId).set({
-      payload: jsonStr,
+      payload: JSON.stringify(state),
       updatedAt: firebase.firestore.FieldValue.serverTimestamp()
     }).then(() => {
       setSyncStatus('☁️ リアルタイム同期済み', false);
@@ -1301,6 +1151,7 @@ function renderScenarioSelect() {
 
 function switchScenario(id) {
   state.currentScenarioId = id;
+  activePillId = null;
   localStorage.setItem(LOCAL_BACKUP_KEY, JSON.stringify(state));
   renderAll();
 }
@@ -1311,6 +1162,7 @@ function createNewScenario() {
   const sc = createDefaultScenarioData(name.trim());
   state.scenarios[sc.id] = sc;
   state.currentScenarioId = sc.id;
+  activePillId = null;
   saveState();
   renderAll();
 }
@@ -1334,6 +1186,7 @@ function deleteScenario() {
   if (!confirm(`「${sc.name}」を削除しますか？`)) return;
   delete state.scenarios[sc.id];
   state.currentScenarioId = Object.keys(state.scenarios)[0];
+  activePillId = null;
   saveState();
   renderAll();
 }
@@ -1414,9 +1267,10 @@ function switchTab(tab) {
   } else {
     addBtn.style.display = 'inline-flex';
     const labels = {
+      pills: '＋ 新規記録',
       info: '＋ 入手情報を記録',
       secret: '＋ 秘匿HOを記録',
-      npc: '＋ NPC / PCを登録',
+      npc: '＋ NPC / 他PLを登録',
       loc: '＋ 場所を登録'
     };
     addBtn.textContent = labels[tab] || '＋ 新規記録';
@@ -1426,7 +1280,11 @@ function switchTab(tab) {
 }
 
 function openCurrentTabModal() {
-  if (currentTab !== 'tree') openModal(currentTab);
+  if (currentTab === 'pills') {
+    openModal('info', null, true);
+  } else if (currentTab !== 'tree') {
+    openModal(currentTab, null, false);
+  }
 }
 
 function updateDayFilterOptions() {
@@ -1445,21 +1303,13 @@ function updateDayFilterOptions() {
   }
 }
 
-function isOtherPL(item) {
-  return item.type === 'npc' && item.subTag === '他PL / PC';
-}
-function isSelfPC(item) {
-  return item.type === 'npc' && item.subTag === '自PC';
-}
-function isAnyPC(item) {
-  return isOtherPL(item) || isSelfPC(item);
+function isPlayerCharacter(item) {
+  return item.type === 'npc' && (item.subTag === '他PL / PC');
 }
 
 function getTypeLabel(item) {
   if (item.type === 'npc') {
-    if (isSelfPC(item)) return `自PC#${item.num}`;
-    if (isOtherPL(item)) return `他PL#${item.num}`;
-    return `NPC#${item.num}`;
+    return isPlayerCharacter(item) ? `他PL#${item.num}` : `NPC#${item.num}`;
   }
   const map = {
     info: `情報#${item.num}`,
@@ -1470,24 +1320,18 @@ function getTypeLabel(item) {
   return map[item.type] || item.type;
 }
 
-function renderCard(item) {
+function renderCard(item, extraCloseBtnHtml = '') {
   const sc = getCurrentScenario();
   const card = document.createElement('div');
-  const isPL = isOtherPL(item);
-  const isSelf = isSelfPC(item);
-  card.className = 'card'
-    + (item.type === 'secret' ? ' secret-card' : '')
-    + (isPL ? ' pl-card' : '')
-    + (isSelf ? ' self-card' : '');
+  const isPL = isPlayerCharacter(item);
+  card.className = 'card' + (item.type === 'secret' ? ' secret-card' : '') + (isPL ? ' pl-card' : '');
   card.id = 'card_' + item.id;
 
   let tagHtml = `<span class="tag day">${escapeHtml(item.day || '日程未設定')}</span>`;
   if (item.type === 'secret') {
     tagHtml += `<span class="tag secret-tag">🔒 ${escapeHtml(item.subTag || '秘匿')}</span>`;
   } else if (item.type === 'npc') {
-    if (isSelf) {
-      tagHtml += `<span class="tag self-tag">🌟 自PC</span>`;
-    } else if (isPL) {
+    if (isPL) {
       tagHtml += `<span class="tag pl-tag">🎭 他PL / PC</span>`;
     } else {
       tagHtml += `<span class="tag npc-tag">👤 ${escapeHtml(item.subTag || 'NPC')}</span>`;
@@ -1523,57 +1367,22 @@ function renderCard(item) {
     ? `<details class="raw-log"><summary>📜 原文・詳細ログを表示</summary><pre>${escapeHtml(item.raw)}</pre></details>`
     : '';
 
-  // 立ち絵・表情差分ギャラリーの構築
-  let portraitHtml = '';
-  if (item.portraits && item.portraits.length > 0) {
-    const activeIdx = (activePortraitIndexMap[item.id] < item.portraits.length)
-      ? activePortraitIndexMap[item.id]
-      : 0;
-    const activeP = item.portraits[activeIdx];
-    const thumbsHtml = item.portraits.length > 1
-      ? `<div class="portrait-thumbs" id="p_thumbs_${item.id}">
-          ${item.portraits.map((p, idx) => `
-            <div class="portrait-thumb ${idx === activeIdx ? 'active' : ''}"
-                 title="${escapeHtml(p.label || '差分' + (idx + 1))}"
-                 onclick="switchCardPortrait('${item.id}', ${idx})">
-              <img src="${p.dataUrl}" alt="">
-            </div>
-          `).join('')}
-        </div>`
-      : '';
-
-    portraitHtml = `
-      <div class="portrait-viewer">
-        <div class="portrait-main-box" onclick="openLightbox('${item.id}')" title="クリックで拡大表示">
-          <img id="p_main_img_${item.id}" src="${activeP.dataUrl}" alt="${escapeHtml(item.title)}">
-          <span class="portrait-label-badge" id="p_main_lbl_${item.id}">${escapeHtml(activeP.label || '通常')}</span>
-        </div>
-        ${thumbsHtml}
-      </div>
-    `;
-  }
-
-  const bodyContentHtml = `
-    <div class="card-text-col">
-      <div class="card-title">${escapeHtml(item.title)}</div>
-      <div class="card-summary">${escapeHtml(item.summary)}</div>
-      ${rawHtml}
-      ${linksHtml}
-    </div>
-  `;
-
   card.innerHTML = `
     <div class="card-header">
       <div class="card-meta">
         <span class="tag">${getTypeLabel(item)}</span>
         ${tagHtml}
       </div>
-      <div style="display:flex; gap:4px;">
+      <div style="display:flex; gap:4px; flex-wrap:wrap;">
         <button style="padding:2px 7px;" onclick="openModal('${item.type}', '${item.id}')">編集</button>
         <button class="danger" style="padding:2px 7px;" onclick="deleteItem('${item.id}')">削除</button>
+        ${extraCloseBtnHtml}
       </div>
     </div>
-    ${portraitHtml ? `<div class="card-body-with-portrait">${portraitHtml}${bodyContentHtml}</div>` : bodyContentHtml}
+    <div class="card-title">${escapeHtml(item.title)}</div>
+    <div class="card-summary">${escapeHtml(item.summary)}</div>
+    ${rawHtml}
+    ${linksHtml}
   `;
   return card;
 }
@@ -1592,10 +1401,139 @@ function renderHypotheses() {
 
 function updateCounts() {
   const sc = getCurrentScenario();
+  const allEl = document.getElementById('count-all');
+  if (allEl) allEl.textContent = sc.items.length;
   ['info', 'secret', 'npc', 'loc'].forEach(t => {
     const el = document.getElementById('count-' + t);
     if (el) el.textContent = sc.items.filter(x => x.type === t).length;
   });
+}
+
+// 楕円形ピルの開閉トグル
+function togglePillDetail(itemId) {
+  if (activePillId === itemId) {
+    activePillId = null;
+  } else {
+    activePillId = itemId;
+  }
+  renderMain();
+}
+
+function renderPillBoard(container, filterFn) {
+  const sc = getCurrentScenario();
+  const board = document.createElement('div');
+  board.className = 'pill-board';
+
+  const categories = [
+    {
+      key: 'info',
+      title: '📄 入手情報',
+      pillClass: 'pill-info',
+      addType: 'info',
+      match: (it) => it.type === 'info'
+    },
+    {
+      key: 'secret',
+      title: '🔒 秘匿HO・裏情報',
+      pillClass: 'pill-secret',
+      addType: 'secret',
+      match: (it) => it.type === 'secret'
+    },
+    {
+      key: 'npc',
+      title: '👤 NPC',
+      pillClass: 'pill-npc',
+      addType: 'npc',
+      match: (it) => it.type === 'npc' && !isPlayerCharacter(it)
+    },
+    {
+      key: 'pl',
+      title: '🎭 他PL / PC',
+      pillClass: 'pill-pl',
+      addType: 'npc',
+      defaultSubTag: '他PL / PC',
+      match: (it) => isPlayerCharacter(it)
+    },
+    {
+      key: 'loc',
+      title: '🗺️ 場所・ギミック',
+      pillClass: 'pill-loc',
+      addType: 'loc',
+      match: (it) => it.type === 'loc'
+    },
+    {
+      key: 'hyp',
+      title: '🧠 考察・仮説',
+      pillClass: 'pill-hyp',
+      addType: 'hyp',
+      match: (it) => it.type === 'hyp'
+    }
+  ];
+
+  let totalMatched = 0;
+
+  categories.forEach(cat => {
+    const catItems = sc.items.filter(it => cat.match(it) && filterFn(it));
+    totalMatched += catItems.length;
+
+    const sec = document.createElement('div');
+    sec.className = 'pill-category-section';
+
+    const header = document.createElement('div');
+    header.className = 'pill-category-header';
+    header.innerHTML = `
+      <span>${cat.title} <span class="badge-count">${catItems.length}</span></span>
+      <button type="button" style="padding:2px 8px;font-size:11px;" onclick="openModalWithPreset('${cat.addType}', '${cat.defaultSubTag || ''}')">＋ 追加</button>
+    `;
+    sec.appendChild(header);
+
+    if (catItems.length === 0) {
+      const emptyMsg = document.createElement('div');
+      emptyMsg.style.cssText = 'font-size:12px;color:var(--text-muted);';
+      emptyMsg.textContent = '該当する項目はありません。';
+      sec.appendChild(emptyMsg);
+    } else {
+      const cloud = document.createElement('div');
+      cloud.className = 'pill-cloud';
+
+      let openedItemInThisCat = null;
+
+      catItems.forEach(it => {
+        const isOpen = (activePillId === it.id);
+        if (isOpen) openedItemInThisCat = it;
+
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = `info-pill-btn ${cat.pillClass}` + (isOpen ? ' active-pill' : '');
+        btn.onclick = () => togglePillDetail(it.id);
+        btn.innerHTML = `
+          <span>${isOpen ? '▼' : '▶'} ${escapeHtml(it.title)}</span>
+          ${it.day ? `<span class="pill-sub-day">${escapeHtml(it.day)}</span>` : ''}
+        `;
+        cloud.appendChild(btn);
+      });
+
+      sec.appendChild(cloud);
+
+      // このカテゴリ内のピルがクリックされて開いている場合、直下に詳細カードを展開
+      if (openedItemInThisCat) {
+        const drawer = document.createElement('div');
+        drawer.className = 'pill-detail-drawer';
+        const closeBtnHtml = `<button style="padding:2px 7px;" onclick="togglePillDetail('${openedItemInThisCat.id}')">▲ 閉じる</button>`;
+        drawer.appendChild(renderCard(openedItemInThisCat, closeBtnHtml));
+        sec.appendChild(drawer);
+      }
+    }
+
+    board.appendChild(sec);
+  });
+
+  if (totalMatched === 0 && sc.items.length > 0) {
+    container.innerHTML = '<div style="color:var(--text-muted);padding:20px;text-align:center;">検索条件に一致する情報がありません。</div>';
+    return;
+  }
+
+  container.appendChild(board);
 }
 
 function renderMain() {
@@ -1611,14 +1549,19 @@ function renderMain() {
   const filterFn = (item) => {
     if (dayFilter !== 'ALL' && item.day !== dayFilter) return false;
     if (currentTab === 'npc' && npcRoleFilter !== 'ALL') {
-      if (npcRoleFilter === 'PL' && !isOtherPL(item)) return false;
-      if (npcRoleFilter === 'SELF' && !isSelfPC(item)) return false;
-      if (npcRoleFilter === 'NPC' && isAnyPC(item)) return false;
+      const isPL = isPlayerCharacter(item);
+      if (npcRoleFilter === 'PL' && !isPL) return false;
+      if (npcRoleFilter === 'NPC' && isPL) return false;
     }
     if (!keyword) return true;
-    const hay = `${item.title} ${item.summary} ${item.raw || ''} ${item.subTag || ''}`.toLowerCase();
+    const hay = `${item.title} ${item.summary} ${item.raw || ''} ${item.subTag || ''} ${item.day || ''}`.toLowerCase();
     return hay.includes(keyword);
   };
+
+  if (currentTab === 'pills') {
+    renderPillBoard(container, filterFn);
+    return;
+  }
 
   if (currentTab === 'tree') {
     const dayOrder = [...sc.days];
@@ -1646,18 +1589,38 @@ function renderMain() {
     return;
   }
 
+  const listWrap = document.createElement('div');
+  listWrap.className = 'card-list';
   const list = sc.items.filter(x => x.type === currentTab && filterFn(x));
   if (list.length === 0) {
     container.innerHTML = '<div style="color:var(--text-muted);padding:20px;text-align:center;">まだ記録がありません。右上のボタンから追加できます。</div>';
     return;
   }
-  list.forEach(item => container.appendChild(renderCard(item)));
+  list.forEach(item => listWrap.appendChild(renderCard(item)));
+  container.appendChild(listWrap);
 }
 
 function jumpToItem(id) {
   const sc = getCurrentScenario();
   const target = sc.items.find(x => x.id === id);
   if (!target) return;
+
+  // ピル一覧タブにいる場合は、そのまま該当ピルを開いてスクロール！
+  if (currentTab === 'pills') {
+    document.getElementById('searchInput').value = '';
+    document.getElementById('dayFilter').value = 'ALL';
+    activePillId = id;
+    renderMain();
+    setTimeout(() => {
+      const el = document.getElementById('card_' + id);
+      if (el) {
+        el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        el.classList.add('highlight');
+        setTimeout(() => el.classList.remove('highlight'), 1800);
+      }
+    }, 50);
+    return;
+  }
 
   if (target.type !== 'hyp' && currentTab !== target.type && currentTab !== 'tree') {
     document.getElementById('searchInput').value = '';
@@ -1708,7 +1671,6 @@ function addCustomDay() {
   populateDaySelect(trimmed);
 }
 
-// リンク選択タブの切り替え＆描画
 function switchLinkCat(cat) {
   currentLinkCat = cat;
   document.querySelectorAll('#linkCatTabs .link-cat-btn').forEach(btn => {
@@ -1765,9 +1727,9 @@ function renderLinkCandidates() {
     if (x.id === currentEditId) return false;
     if (currentLinkCat !== 'ALL') {
       if (currentLinkCat === 'pl') {
-        if (!isAnyPC(x)) return false;
+        if (!isPlayerCharacter(x)) return false;
       } else if (currentLinkCat === 'npc') {
-        if (x.type !== 'npc' || isAnyPC(x)) return false;
+        if (x.type !== 'npc' || isPlayerCharacter(x)) return false;
       } else {
         if (x.type !== currentLinkCat) return false;
       }
@@ -1796,22 +1758,41 @@ function renderLinkCandidates() {
   });
 }
 
-function openModal(type, id = null) {
+function onModalCategoryChange(newType) {
+  openModal(newType, null, true);
+}
+
+function openModalWithPreset(type, presetSubTag) {
+  openModal(type, null, false);
+  if (presetSubTag) {
+    document.getElementById('fieldSubTag').value = presetSubTag;
+  }
+}
+
+function openModal(type, id = null, showCatPicker = false) {
   const sc = getCurrentScenario();
   document.getElementById('editType').value = type;
   document.getElementById('editId').value = id || '';
 
+  const catPicker = document.getElementById('groupCategoryPicker');
+  if (showCatPicker && !id) {
+    catPicker.style.display = 'flex';
+    document.getElementById('fieldCategoryType').value = type;
+  } else {
+    catPicker.style.display = 'none';
+  }
+
   const titleLabels = {
     info: '入手情報のタイトル',
     secret: '秘匿HO・裏情報のタイトル',
-    npc: 'NPC / 自PC・他PCの名前・HO番号・PL名',
+    npc: 'NPC / 他PCの名前・HO番号・PL名',
     loc: '場所・ギミックの名称',
     hyp: '考察・仮説のタイトル'
   };
   const modalHeaders = {
     info: id ? '入手情報の編集' : '新しい入手情報を記録',
     secret: id ? '秘匿HOの編集' : '🔒 新しい秘匿HO・裏情報を記録',
-    npc: id ? 'NPC / PC情報の編集' : '新しいNPC / PCを登録',
+    npc: id ? 'NPC / 他PL情報の編集' : '新しいNPC / 他PLを登録',
     loc: id ? '場所情報の編集' : '新しい場所・ギミックを登録',
     hyp: id ? '考察仮説の編集' : '新しい考察・仮説を作成'
   };
@@ -1820,14 +1801,12 @@ function openModal(type, id = null) {
 
   const groupSubTag = document.getElementById('groupSubTag');
   const fieldSubTag = document.getElementById('fieldSubTag');
-  const groupPortraits = document.getElementById('groupPortraits');
   fieldSubTag.innerHTML = '';
 
   const item = id ? sc.items.find(x => x.id === id) : null;
 
   if (type === 'secret') {
     groupSubTag.style.display = 'flex';
-    groupPortraits.style.display = 'none';
     document.getElementById('labelSubTag').textContent = '秘匿の種別';
     ['自PCの秘匿HO', '秘匿の追加・更新', '他PCへの疑念・推測', '個別導入・裏設定'].forEach(optText => {
       const o = document.createElement('option');
@@ -1837,9 +1816,8 @@ function openModal(type, id = null) {
     });
   } else if (type === 'npc') {
     groupSubTag.style.display = 'flex';
-    groupPortraits.style.display = 'flex';
-    document.getElementById('labelSubTag').textContent = '人物区分（NPC / 自PC / 他PL）';
-    const options = ['NPC', '他PL / PC', '自PC'];
+    document.getElementById('labelSubTag').textContent = '人物区分（NPC / 他PL）';
+    const options = ['NPC', '他PL / PC'];
     if (item && item.subTag && !options.includes(item.subTag)) {
       options.push(item.subTag);
     }
@@ -1851,7 +1829,6 @@ function openModal(type, id = null) {
     });
   } else if (type === 'loc') {
     groupSubTag.style.display = 'flex';
-    groupPortraits.style.display = 'none';
     document.getElementById('labelSubTag').textContent = '探索ステータス';
     ['未探索・未解決', '探索済み・確認完了', '要再調査・ロック中'].forEach(optText => {
       const o = document.createElement('option');
@@ -1861,7 +1838,6 @@ function openModal(type, id = null) {
     });
   } else {
     groupSubTag.style.display = 'none';
-    groupPortraits.style.display = 'none';
   }
 
   populateDaySelect(item ? item.day : (sc.days[1] || sc.days[0]));
@@ -1872,13 +1848,6 @@ function openModal(type, id = null) {
     fieldSubTag.value = item.subTag;
   }
 
-  // 立ち絵配列の初期化
-  modalPortraits = (item && Array.isArray(item.portraits))
-    ? JSON.parse(JSON.stringify(item.portraits))
-    : [];
-  renderPortraitEditor();
-
-  // リンク選択状態のリセット＆初期化
   modalSelectedLinkIds = new Set(item ? (item.links || []) : []);
   if (item) {
     sc.items.forEach(other => {
@@ -1912,7 +1881,6 @@ function saveItem() {
   }
 
   const selectedLinks = [...modalSelectedLinkIds];
-  const portraitsToSave = (type === 'npc') ? modalPortraits : [];
 
   if (id) {
     const item = sc.items.find(x => x.id === id);
@@ -1922,7 +1890,6 @@ function saveItem() {
       item.summary = summary;
       item.raw = raw;
       if (type === 'secret' || type === 'npc' || type === 'loc') item.subTag = subTag;
-      if (type === 'npc') item.portraits = portraitsToSave;
       item.links = selectedLinks;
       sc.items.forEach(other => {
         if (other.id !== id && other.links && !selectedLinks.includes(other.id)) {
@@ -1933,8 +1900,9 @@ function saveItem() {
   } else {
     const existingNums = sc.items.filter(x => x.type === type).map(x => x.num || 0);
     const nextNum = existingNums.length > 0 ? Math.max(...existingNums) + 1 : 1;
+    const newId = type + '_' + Date.now();
     const newItem = {
-      id: type + '_' + Date.now(),
+      id: newId,
       type,
       num: nextNum,
       day,
@@ -1942,10 +1910,12 @@ function saveItem() {
       title,
       summary,
       raw,
-      links: selectedLinks,
-      portraits: portraitsToSave
+      links: selectedLinks
     };
     sc.items.push(newItem);
+    if (currentTab === 'pills') {
+      activePillId = newId;
+    }
   }
 
   saveState();
@@ -1960,6 +1930,7 @@ function deleteItem(id) {
   sc.items.forEach(x => {
     if (x.links) x.links = x.links.filter(l => l !== id);
   });
+  if (activePillId === id) activePillId = null;
   saveState();
   renderAll();
 }
@@ -1983,6 +1954,7 @@ function importJSON(event) {
       const normalized = normalizeStateData(rawParsed);
       if (normalized) {
         state = normalized;
+        activePillId = null;
         saveState();
         renderAll();
         alert('過去のJSONデータを正常に復元・適用しました！');
@@ -2013,7 +1985,7 @@ function exportMarkdown() {
   const sections = [
     { type: 'secret', title: '🔒 秘匿HO・裏情報' },
     { type: 'info', title: '📄 入手情報' },
-    { type: 'npc', title: '👤 NPC・PCリスト' },
+    { type: 'npc', title: '👤 NPC・他PLリスト' },
     { type: 'loc', title: '🗺️ 場所・ギミック' },
     { type: 'hyp', title: '🧠 考察・仮説' }
   ];
