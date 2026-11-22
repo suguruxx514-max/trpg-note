@@ -313,21 +313,51 @@
     background: var(--bg-card);
     border: 1px solid var(--border);
     border-radius: 10px;
-    padding: 12px;
+    padding: 10px 12px;
     display: flex;
     flex-direction: column;
     gap: 10px;
+    transition: border-color 0.15s;
   }
   .pill-category-header {
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: 8px;
-    font-size: 13px;
+    font-size: 13.5px;
     font-weight: 700;
     color: var(--text-main);
-    padding-bottom: 6px;
+    user-select: none;
+  }
+  .pill-category-header.is-open {
+    padding-bottom: 8px;
     border-bottom: 1px dashed var(--border);
+  }
+  .pill-cat-toggle-title {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    cursor: pointer;
+    flex: 1;
+    padding: 2px 0;
+  }
+  .pill-cat-toggle-title:hover {
+    color: var(--accent);
+  }
+  .cat-chevron {
+    font-size: 11px;
+    color: var(--text-muted);
+    display: inline-block;
+    transition: transform 0.15s;
+  }
+  .cat-chevron.open {
+    transform: rotate(90deg);
+  }
+  .pill-board-controls {
+    display: flex;
+    justify-content: flex-end;
+    gap: 6px;
+    margin-bottom: -4px;
   }
   .pill-cloud {
     display: flex;
@@ -374,7 +404,6 @@
   }
 
   /* カテゴリ別カラー（楕円形背景色） */
-  /* 入手情報：スカイブルー */
   .pill-info {
     background: rgba(14, 165, 233, 0.22);
     border-color: rgba(14, 165, 233, 0.55);
@@ -385,7 +414,6 @@
     color: #7dd3fc;
   }
 
-  /* 秘匿HO：パープル */
   .pill-secret {
     background: rgba(168, 85, 247, 0.22);
     border-color: rgba(168, 85, 247, 0.55);
@@ -396,7 +424,6 @@
     color: #e9d5ff;
   }
 
-  /* NPC：エメラルドグリーン */
   .pill-npc {
     background: rgba(16, 185, 129, 0.2);
     border-color: rgba(16, 185, 129, 0.52);
@@ -407,7 +434,6 @@
     color: #6ee7b7;
   }
 
-  /* 他PL / PC：アンバー・オレンジ */
   .pill-pl {
     background: rgba(245, 158, 11, 0.22);
     border-color: rgba(245, 158, 11, 0.55);
@@ -418,7 +444,6 @@
     color: #fcd34d;
   }
 
-  /* 場所・ギミック：イエローゴールド */
   .pill-loc {
     background: rgba(234, 179, 8, 0.22);
     border-color: rgba(234, 179, 8, 0.55);
@@ -429,7 +454,6 @@
     color: #fef08a;
   }
 
-  /* 考察・仮説：ローズピンク */
   .pill-hyp {
     background: rgba(236, 72, 153, 0.2);
     border-color: rgba(236, 72, 153, 0.52);
@@ -904,7 +928,8 @@ let freeMemoTimer = null;
 
 let modalSelectedLinkIds = new Set();
 let currentLinkCat = 'ALL';
-let activePillId = null; // ピル一覧で現在開いているアイテムID
+let activePillId = null;
+let openPillCategories = new Set();
 
 let state = {
   currentScenarioId: null,
@@ -912,7 +937,6 @@ let state = {
 };
 let currentTab = 'pills';
 
-// テーマ切替機能
 function initTheme() {
   const savedTheme = localStorage.getItem(THEME_KEY) || 'dark';
   applyTheme(savedTheme);
@@ -927,7 +951,6 @@ function applyTheme(theme) {
   if (sel) sel.value = theme;
 }
 
-// 過去バージョンのJSONデータの互換性・正規化処理
 function normalizeStateData(rawState) {
   if (!rawState || typeof rawState !== 'object' || !rawState.scenarios) return null;
   Object.values(rawState.scenarios).forEach(sc => {
@@ -1136,7 +1159,6 @@ function getCurrentScenario() {
   return sc;
 }
 
-// Scenario management
 function renderScenarioSelect() {
   const select = document.getElementById('scenarioSelect');
   select.innerHTML = '';
@@ -1152,6 +1174,7 @@ function renderScenarioSelect() {
 function switchScenario(id) {
   state.currentScenarioId = id;
   activePillId = null;
+  openPillCategories.clear();
   localStorage.setItem(LOCAL_BACKUP_KEY, JSON.stringify(state));
   renderAll();
 }
@@ -1163,6 +1186,7 @@ function createNewScenario() {
   state.scenarios[sc.id] = sc;
   state.currentScenarioId = sc.id;
   activePillId = null;
+  openPillCategories.clear();
   saveState();
   renderAll();
 }
@@ -1187,11 +1211,11 @@ function deleteScenario() {
   delete state.scenarios[sc.id];
   state.currentScenarioId = Object.keys(state.scenarios)[0];
   activePillId = null;
+  openPillCategories.clear();
   saveState();
   renderAll();
 }
 
-// Free Memo
 function renderFreeMemo() {
   const sc = getCurrentScenario();
   const el = document.getElementById('freeMemoInput');
@@ -1209,7 +1233,6 @@ function handleFreeMemoInput() {
   }, 500);
 }
 
-// Todos
 function addTodo() {
   const input = document.getElementById('newTodoInput');
   const text = input.value.trim();
@@ -1252,7 +1275,6 @@ function renderTodos() {
   });
 }
 
-// Tabs & Filters
 function switchTab(tab) {
   currentTab = tab;
   document.querySelectorAll('.tab-btn').forEach(btn => {
@@ -1409,7 +1431,25 @@ function updateCounts() {
   });
 }
 
-// 楕円形ピルの開閉トグル
+function toggleCategorySection(catKey) {
+  if (openPillCategories.has(catKey)) {
+    openPillCategories.delete(catKey);
+  } else {
+    openPillCategories.add(catKey);
+  }
+  renderMain();
+}
+
+function toggleAllPillCategories(openAll) {
+  const allKeys = ['info', 'secret', 'npc', 'pl', 'loc', 'hyp'];
+  if (openAll) {
+    allKeys.forEach(k => openPillCategories.add(k));
+  } else {
+    openPillCategories.clear();
+  }
+  renderMain();
+}
+
 function togglePillDetail(itemId) {
   if (activePillId === itemId) {
     activePillId = null;
@@ -1419,10 +1459,31 @@ function togglePillDetail(itemId) {
   renderMain();
 }
 
+function getCategoryKeyForItem(it) {
+  if (it.type === 'info') return 'info';
+  if (it.type === 'secret') return 'secret';
+  if (it.type === 'npc') return isPlayerCharacter(it) ? 'pl' : 'npc';
+  if (it.type === 'loc') return 'loc';
+  if (it.type === 'hyp') return 'hyp';
+  return 'info';
+}
+
 function renderPillBoard(container, filterFn) {
   const sc = getCurrentScenario();
+  const keyword = document.getElementById('searchInput').value.trim();
+  const dayFilter = document.getElementById('dayFilter').value;
+  const isFiltering = (keyword.length > 0 || dayFilter !== 'ALL');
+
   const board = document.createElement('div');
   board.className = 'pill-board';
+
+  const ctrlBar = document.createElement('div');
+  ctrlBar.className = 'pill-board-controls';
+  ctrlBar.innerHTML = `
+    <button type="button" style="padding:3px 9px;font-size:11.5px;" onclick="toggleAllPillCategories(true)">📂 すべてのカテゴリを開く</button>
+    <button type="button" style="padding:3px 9px;font-size:11.5px;" onclick="toggleAllPillCategories(false)">📁 すべて閉じる</button>
+  `;
+  board.appendChild(ctrlBar);
 
   const categories = [
     {
@@ -1476,52 +1537,61 @@ function renderPillBoard(container, filterFn) {
     const catItems = sc.items.filter(it => cat.match(it) && filterFn(it));
     totalMatched += catItems.length;
 
+    if (isFiltering && catItems.length === 0) return;
+
+    const isCatOpen = isFiltering || openPillCategories.has(cat.key);
+
     const sec = document.createElement('div');
     sec.className = 'pill-category-section';
 
     const header = document.createElement('div');
-    header.className = 'pill-category-header';
+    header.className = 'pill-category-header' + (isCatOpen ? ' is-open' : '');
     header.innerHTML = `
-      <span>${cat.title} <span class="badge-count">${catItems.length}</span></span>
+      <span class="pill-cat-toggle-title" onclick="toggleCategorySection('${cat.key}')" title="クリックして一覧を開閉">
+        <span class="cat-chevron ${isCatOpen ? 'open' : ''}">▶</span>
+        <span>${cat.title}</span>
+        <span class="badge-count">${catItems.length}</span>
+      </span>
       <button type="button" style="padding:2px 8px;font-size:11px;" onclick="openModalWithPreset('${cat.addType}', '${cat.defaultSubTag || ''}')">＋ 追加</button>
     `;
     sec.appendChild(header);
 
-    if (catItems.length === 0) {
-      const emptyMsg = document.createElement('div');
-      emptyMsg.style.cssText = 'font-size:12px;color:var(--text-muted);';
-      emptyMsg.textContent = '該当する項目はありません。';
-      sec.appendChild(emptyMsg);
-    } else {
-      const cloud = document.createElement('div');
-      cloud.className = 'pill-cloud';
+    if (isCatOpen) {
+      if (catItems.length === 0) {
+        const emptyMsg = document.createElement('div');
+        emptyMsg.style.cssText = 'font-size:12px;color:var(--text-muted);padding-left:18px;';
+        emptyMsg.textContent = '該当する項目はありません。';
+        sec.appendChild(emptyMsg);
+      } else {
+        const cloud = document.createElement('div');
+        cloud.className = 'pill-cloud';
 
-      let openedItemInThisCat = null;
+        let openedItemInThisCat = null;
 
-      catItems.forEach(it => {
-        const isOpen = (activePillId === it.id);
-        if (isOpen) openedItemInThisCat = it;
+        catItems.forEach(it => {
+          const isOpen = (activePillId === it.id);
+          if (isOpen) openedItemInThisCat = it;
 
-        const btn = document.createElement('button');
-        btn.type = 'button';
-        btn.className = `info-pill-btn ${cat.pillClass}` + (isOpen ? ' active-pill' : '');
-        btn.onclick = () => togglePillDetail(it.id);
-        btn.innerHTML = `
-          <span>${isOpen ? '▼' : '▶'} ${escapeHtml(it.title)}</span>
-          ${it.day ? `<span class="pill-sub-day">${escapeHtml(it.day)}</span>` : ''}
-        `;
-        cloud.appendChild(btn);
-      });
+          const btn = document.createElement('button');
+          btn.type = 'button';
+          btn.className = `info-pill-btn ${cat.pillClass}` + (isOpen ? ' active-pill' : '');
+          btn.onclick = () => togglePillDetail(it.id);
+          btn.innerHTML = `
+            <span>${isOpen ? '▼' : '▶'} ${escapeHtml(it.title)}</span>
+            ${it.day ? `<span class="pill-sub-day">${escapeHtml(it.day)}</span>` : ''}
+          `;
+          cloud.appendChild(btn);
+        });
 
-      sec.appendChild(cloud);
+        sec.appendChild(cloud);
 
-      // このカテゴリ内のピルがクリックされて開いている場合、直下に詳細カードを展開
-      if (openedItemInThisCat) {
-        const drawer = document.createElement('div');
-        drawer.className = 'pill-detail-drawer';
-        const closeBtnHtml = `<button style="padding:2px 7px;" onclick="togglePillDetail('${openedItemInThisCat.id}')">▲ 閉じる</button>`;
-        drawer.appendChild(renderCard(openedItemInThisCat, closeBtnHtml));
-        sec.appendChild(drawer);
+        if (openedItemInThisCat) {
+          const drawer = document.createElement('div');
+          drawer.className = 'pill-detail-drawer';
+          const closeBtnHtml = `<button style="padding:2px 7px;" onclick="togglePillDetail('${openedItemInThisCat.id}')">▲ 閉じる</button>`;
+          drawer.appendChild(renderCard(openedItemInThisCat, closeBtnHtml));
+          sec.appendChild(drawer);
+        }
       }
     }
 
@@ -1605,10 +1675,10 @@ function jumpToItem(id) {
   const target = sc.items.find(x => x.id === id);
   if (!target) return;
 
-  // ピル一覧タブにいる場合は、そのまま該当ピルを開いてスクロール！
   if (currentTab === 'pills') {
     document.getElementById('searchInput').value = '';
     document.getElementById('dayFilter').value = 'ALL';
+    openPillCategories.add(getCategoryKeyForItem(target));
     activePillId = id;
     renderMain();
     setTimeout(() => {
@@ -1914,6 +1984,7 @@ function saveItem() {
     };
     sc.items.push(newItem);
     if (currentTab === 'pills') {
+      openPillCategories.add(getCategoryKeyForItem(newItem));
       activePillId = newId;
     }
   }
@@ -1931,11 +2002,11 @@ function deleteItem(id) {
     if (x.links) x.links = x.links.filter(l => l !== id);
   });
   if (activePillId === id) activePillId = null;
+  openPillCategories.clear();
   saveState();
   renderAll();
 }
 
-// Export / Import
 function exportJSON() {
   const blob = new Blob([JSON.stringify(state, null, 2)], { type: 'application/json' });
   const a = document.createElement('a');
@@ -1955,6 +2026,7 @@ function importJSON(event) {
       if (normalized) {
         state = normalized;
         activePillId = null;
+        openPillCategories.clear();
         saveState();
         renderAll();
         alert('過去のJSONデータを正常に復元・適用しました！');
